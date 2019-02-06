@@ -80,16 +80,11 @@ namespace KillerEstate
             {
                 GameManager.Instance.EndGame(false);
             }
-            // Go to map
-            else if (Input.GetKeyDown(KeyCode.Keypad0))
-            {
-                GameManager.Instance.LoadMapScene();
-            }
             // Win battle
-            else if (GameManager.Instance.State == GameManager.GameState.Battle
-                     && Input.GetKeyDown(KeyCode.Keypad1))
+            else if (GameManager.Instance.State == GameManager.GameState.Level
+                     && Input.GetKeyDown(KeyCode.Home))
             {
-                GameManager.Instance.BattleStatus = GameManager.WaveState.WaveEnd;
+                GameManager.Instance.WaveStatus = GameManager.WaveState.WaveEnd;
                 GameManager.Instance.EndWave();
             }
             // Pause the game in editor
@@ -106,6 +101,34 @@ namespace KillerEstate
             else if (Input.GetKeyDown(KeyCode.M))
             {
                 GameManager.Instance.Fade.StartFadeIn(false);
+            }
+            // Return to the main menu
+            else if (Input.GetKeyDown(KeyCode.Keypad0))
+            {
+                GameManager.Instance.ReturnToMainMenu();
+            }
+            else
+            {
+                GoToLevel();
+            }
+        }
+
+        private void GoToLevel()
+        {
+            // Level 1
+            if (Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                GameManager.Instance.LoadLevel(1);
+            }
+            // Level 1
+            else if (Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                GameManager.Instance.LoadLevel(2);
+            }
+            // Level 3
+            else if (Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                GameManager.Instance.LoadLevel(3);
             }
         }
     }

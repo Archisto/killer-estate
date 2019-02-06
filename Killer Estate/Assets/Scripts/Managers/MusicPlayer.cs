@@ -286,8 +286,7 @@ namespace KillerEstate
                 return;
             }
 
-            if (trackNum >= 0 &&
-                trackNum < tracks.Count)
+            if (trackNum >= 0 && trackNum < tracks.Count)
             {
                 if (fadeOut)
                 {

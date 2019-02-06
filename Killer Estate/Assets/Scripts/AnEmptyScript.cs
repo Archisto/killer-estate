@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Atlanticide
+namespace KillerEstate
 {
     public class AnEmptyScript : MonoBehaviour
     {

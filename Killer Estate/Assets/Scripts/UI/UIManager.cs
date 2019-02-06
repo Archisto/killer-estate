@@ -52,14 +52,7 @@ namespace KillerEstate.UI
                     ActivateHUD(false);
                     break;
                 }
-                case GameManager.GameState.Map:
-                {
-                    _mainMenu.Activate(false);
-                    ActivatePauseMenu(false);
-                    ActivateHUD(true);
-                    break;
-                }
-                case GameManager.GameState.Battle:
+                case GameManager.GameState.Level:
                 {
                     _mainMenu.Activate(false);
                     ActivatePauseMenu(false);

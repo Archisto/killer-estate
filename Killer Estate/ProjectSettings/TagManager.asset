@@ -14,11 +14,11 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerWeapon
+  - Enemy
+  - Projectile
+  - Environment
+  - Interactable
   - 
   - 
   - 

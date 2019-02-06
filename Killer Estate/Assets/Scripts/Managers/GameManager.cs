@@ -33,16 +33,18 @@ namespace KillerEstate
         }
         #endregion Statics
 
+        private const string MainMenuKey = "MainMenu";
+        private const string LevelKey = "Level";
+
         public enum GameState
         {
             MainMenu = 0,
-            Map = 1,
-            Battle = 2
+            Level = 1
         }
 
         public enum WaveState
         {
-            NoBattle = 0,
+            Intro = 0,
             Active = 1,
             WaveEnd = 2,
             Lost = 3
@@ -72,13 +74,15 @@ namespace KillerEstate
 
         private int _score;
         private int _waveNum;
+        private Level _currentLevel;
+        private List<Level> _levels;
         private LevelObject[] _levelObjects;
 
         #region Properties
 
         public GameState State { get; private set; }
 
-        public WaveState BattleStatus { get; set; }
+        public WaveState WaveStatus { get; set; }
 
         public SceneTransition Transition
         {
@@ -172,6 +176,7 @@ namespace KillerEstate
             else if (instance != this)
             {
                 Destroy(gameObject);
+                return;
             }
 
             DontDestroyOnLoad(gameObject);
@@ -180,7 +185,15 @@ namespace KillerEstate
 
         private void Init()
         {
-            State = GameState.MainMenu;
+            if (SceneManager.GetActiveScene().name.Equals(MainMenuKey))
+            {
+                State = GameState.MainMenu;
+            }
+            else
+            {
+                State = GameState.Level;
+            }
+
             Transition = SceneTransition.InScene;
 
             // Initializes the save system and loads data
@@ -189,7 +202,8 @@ namespace KillerEstate
 
             InitLocalization();
             InitScene();
-            InitKeyCodes();
+            InitLevels();
+            KeyCodes = new List<int>();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -210,7 +224,7 @@ namespace KillerEstate
         /// </summary>
         private void OnLanguageLoaded()
         {
-            // TODO: Update the UI if the player changed the language.
+            // TODO: Update the UI if the player changes the language.
         }
 
         private void InitScene()
@@ -220,9 +234,10 @@ namespace KillerEstate
             Fade = FindObjectOfType<FadeToColor>();
         }
 
-        private void InitKeyCodes()
+        private void InitLevels()
         {
-            KeyCodes = new List<int>();
+            _levels = new List<Level>();
+            _levels.Add(new Level(1, "Main Level"));
         }
 
         #endregion Initialization
@@ -239,22 +254,37 @@ namespace KillerEstate
                 if (Transition == SceneTransition.EnteringScene
                     && _sceneJustStarted)
                 {
-                    if (State == GameState.Battle)
-                    {
-                        if (_framesWaited < _waitFramesBeforeSettingUpScene)
-                        {
-                            _framesWaited++;
-                        }
-                        else
-                        {
-                            _sceneJustStarted = false;
-                        }
-                    }
-                    else
-                    {
-                        _sceneJustStarted = false;
-                    }
+                    _sceneJustStarted = false;
+
+                    //if (State == GameState.Battle)
+                    //{
+                    //    if (_framesWaited < _waitFramesBeforeSettingUpScene)
+                    //    {
+                    //        _framesWaited++;
+                    //    }
+                    //    else
+                    //    {
+                    //        _sceneJustStarted = false;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    _sceneJustStarted = false;
+                    //}
                 }
+            }
+        }
+
+        private Level GetLevel(int level)
+        {
+            if (level >= 1 && level <= _levels.Count)
+            {
+                return _levels[level - 1];
+            }
+            else
+            {
+                Debug.LogError("Invalid level number: " + level);
+                return _levels[0];
             }
         }
 
@@ -277,17 +307,12 @@ namespace KillerEstate
             {
                 case GameState.MainMenu:
                 {
-                    _sceneToLoad = "MainMenu";
+                    _sceneToLoad = MainMenuKey;
                     break;
                 }
-                case GameState.Map:
+                case GameState.Level:
                 {
-                    _sceneToLoad = "MapScene";
-                    break;
-                }
-                case GameState.Battle:
-                {
-                    _sceneToLoad = "BattleScene";
+                    _sceneToLoad = LevelKey + _currentLevel;
                     break;
                 }
             }
@@ -296,27 +321,29 @@ namespace KillerEstate
             {
                 StartLoadingScene();
             }
+            else
+            {
+                Debug.LogError("Invalid scene name.");
+            }
         }
 
         public void LoadNewGame()
         {
             _gameRunning = false;
-            State = GameState.Map;
-            LoadScene(GameState.Map);
+            State = GameState.Level;
+            LoadScene(GameState.Level);
         }
 
-        public void LoadBattleScene()
-        {
-            State = GameState.Battle;
-            LoadScene(GameState.Battle);
-        }
-
-        public void LoadMapScene()
+        public void LoadLevel(int levelNumber)
         {
             if (Transition == SceneTransition.InScene)
             {
-                State = GameState.Map;
-                LoadScene(GameState.Map);
+                _currentLevel = GetLevel(levelNumber);
+                Debug.Log("Loading level " + _currentLevel.Number
+                          + ": " + _currentLevel.Name);
+
+                State = GameState.Level;
+                LoadScene(GameState.Level);
             }
         }
 
@@ -359,14 +386,9 @@ namespace KillerEstate
                     //MusicPlayer.Instance.Play(0, true);
                     break;
                 }
-                case GameState.Map:
+                case GameState.Level:
                 {
-                    InitMapScreen();
-                    break;
-                }
-                case GameState.Battle:
-                {
-                    StartBattle();
+                    InitLevel();
                     break;
                 }
             }
@@ -376,7 +398,7 @@ namespace KillerEstate
 
         #region Gameplay
 
-        private void InitMapScreen()
+        private void InitLevel()
         {
             if (!_gameRunning)
             {
@@ -390,6 +412,7 @@ namespace KillerEstate
         {
             Debug.Log("New game started");
             _score = 0;
+            _waveNum = 0;
             UI.UpdateScore(_score);
             _gameRunning = true;
         }
@@ -403,26 +426,25 @@ namespace KillerEstate
         private void StartBattle()
         {
             Debug.Log("hear!");
-            BattleStatus = WaveState.Active;
+            WaveStatus = WaveState.Active;
             MusicPlayer.Instance.Play(1, true);
         }
 
         public AudioSource EndWave()
         {
-            if (BattleStatus == WaveState.Lost)
+            if (WaveStatus == WaveState.Lost)
             {
                 Debug.Log("Game Over!");
                 return SFXPlayer.Instance.Play(Sound.Asdfghj, volumeFactor: 0.4f);
             }
-            else if (BattleStatus == WaveState.WaveEnd)
+            else if (WaveStatus == WaveState.WaveEnd)
             {
                 WinWave();
                 return SFXPlayer.Instance.Play(Sound.GetRekt2, volumeFactor: 0.4f);
             }
             else
             {
-                BattleStatus = WaveState.NoBattle;
-                Debug.LogError("Wave ended without winner");
+                Debug.LogError("No wave was active");
                 return null;
             }
         }
@@ -470,8 +492,15 @@ namespace KillerEstate
 
         public void ReturnToMainMenu()
         {
+            if (_gameRunning)
+            {
+                Debug.Log("Progress lost");
+                _gameRunning = false;
+            }
+
             State = GameState.MainMenu;
             MusicPlayer.Instance.Stop();
+            Debug.Log("Returning to the main menu");
             LoadScene(GameState.MainMenu);
         }
 
@@ -532,6 +561,11 @@ namespace KillerEstate
         #endregion Gameplay
 
         #region Persistence
+
+        private void SaveGame()
+        {
+            // TODO
+        }
 
         private void LoadGame()
         {

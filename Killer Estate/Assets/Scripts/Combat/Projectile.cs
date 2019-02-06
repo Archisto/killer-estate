@@ -8,7 +8,7 @@ namespace KillerEstate
     /// <summary>
     /// A projectile which deals damage to opposing units.
     /// </summary>
-    public class Projectile : MonoBehaviour
+    public class Projectile : LevelObject
     {
         [SerializeField, Header("Basic Values")]
         private int damage;
@@ -50,10 +50,10 @@ namespace KillerEstate
         private Rigidbody rBody;
 
         /// <summary>
-        /// The hole the projectile creates on collision
+        /// The hit mark the projectile creates on collision
         /// </summary>
         private HitMark hitMark;
-        private bool holeCreated;
+        private bool hitMarkCreated;
 
         /// <summary>
         /// Self-initializing property. Gets the reference to
@@ -76,10 +76,25 @@ namespace KillerEstate
         /// Initializes the object.
         /// </summary>
         /// <param name="collisionCallback">A method which is called when
-        /// the projectile hit ssomething</param>
+        /// the projectile hit something</param>
         public void Init(Action<Projectile> collisionCallback)
         {
             PassCollisionInfoToWeapon = collisionCallback;
+        }
+
+        public void SetDamage(int damage)
+        {
+            this.damage = damage;
+        }
+
+        public void SetForce(float force)
+        {
+            shootingForce = force;
+        }
+
+        public int GetDamage()
+        {
+            return damage;
         }
 
         /// <summary>
@@ -88,9 +103,8 @@ namespace KillerEstate
         /// <param name="direction">Firing direction</param>
         public void Launch(Vector3 direction)
         {
-
             Rigidbody.AddForce(direction.normalized * shootingForce, ForceMode.Impulse);
-            //holeCreated = false;
+            //hitMarkCreated = false;
         }
 
         /// <summary>
@@ -99,20 +113,30 @@ namespace KillerEstate
         /// <param name="collision">Collision info</param>
         protected void OnCollisionEnter(Collision collision)
         {
-            ApplyDamage();
+            if (!Destroyed)
+            {
+                //ApplyDamage();
+                IDamageReceiver dmgRec = collision.transform.GetComponent<IDamageReceiver>();
+                if (dmgRec != null)
+                {
+                    dmgRec.TakeDamage(damage);
+                }
 
-            // Stops the projectile
-            Rigidbody.velocity = Vector3.zero;
+                // Stops the projectile
+                Rigidbody.velocity = Vector3.zero;
 
-            // Passes collision information to the weapon
-            PassCollisionInfoToWeapon(this);
+                // Passes collision information to the weapon
+                PassCollisionInfoToWeapon(this);
 
-            // Creates a hole at the point of impact
-            //if (!holeCreated)
-            //{
-            //    CreateHole(collision);
-            //    holeCreated = true;
-            //}
+                // Creates a hit mark at the point of impact
+                //if (!hitMarkCreated)
+                //{
+                //    CreateHitMark(collision);
+                //    hitMarkCreated = true;
+                //}
+
+                DestroyObject();
+            }
         }
 
         /// <summary>
@@ -152,7 +176,7 @@ namespace KillerEstate
         }
 
         /// <summary>
-        /// Creates a hole at the point of collision.
+        /// Creates a hit mark at the point of collision.
         /// </summary>
         /// <param name="collision">Collision info</param>
         private void CreateHitMark(Collision collision)
@@ -171,13 +195,27 @@ namespace KillerEstate
                 //    }
                 //}
 
-                // TODO: Fix the hole's rotation
+                // TODO: Fix the hit mark's rotation
 
                 hitMark.transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - point);
-                //hole.transform.rotation = Quaternion.LookRotation(Vector3.up, transform.position - point);
+                //hitMark.transform.rotation = Quaternion.LookRotation(Vector3.up, transform.position - point);
 
                 hitMark.gameObject.SetActive(true);
             }
+        }
+
+        public override void DestroyObject()
+        {
+            Destroyed = true;
+            gameObject.SetActive(false);
+            base.DestroyObject();
+        }
+
+        public override void ResetObject()
+        {
+            Destroyed = false;
+            gameObject.SetActive(false);
+            base.ResetObject();
         }
     }
 }

@@ -80,7 +80,7 @@ namespace KillerEstate
             // Instantiate pooled objects under this parent.
             T go = Object.Instantiate(_objectPrefab);
 
-            if(isActive)
+            if (isActive)
             {
                 Activate(go);
             }
@@ -123,19 +123,27 @@ namespace KillerEstate
         /// <param name="component">Object to activate</param>
         protected virtual void Activate( T component )
         {
+            LevelObject lo = component as LevelObject;
+            if (lo != null)
+            {
+                lo.ResetObject();
+            }
+
             component.gameObject.SetActive(true);
         }
 
         /// <summary>
-        /// Fetches the object form the pool.
+        /// Fetches an object from the pool.
         /// </summary>
-        /// <returns>An object from the pool or if all objects are already in use and pool cannot grow, returns null</returns>
+        /// <returns>An object from the pool, or
+        /// if all objects are already in use and
+        /// the pool cannot grow, null</returns>
         public T GetPooledObject()
         {
             T result = null;
-            for(int i = 0; i < _pool.Count; i++)
+            for (int i = 0; i < _pool.Count; i++)
             {
-                if(_pool[i].gameObject.activeSelf == false)
+                if (_pool[i].gameObject.activeSelf == false)
                 {
                     result = _pool[i];
                     break; // Jumps out from the loop.
@@ -144,13 +152,13 @@ namespace KillerEstate
 
             // If there were no inactive GameObjects in the pool and the pool should
             // grow, then let's add a new object to the pool.
-            if(result == null && _shouldGrow)
+            if (result == null && _shouldGrow)
             {
                 result = AddObject();
             }
 
-            // If we found an incative object let's activate it.
-            if(result != null)
+            // If we found an inactive object let's activate it.
+            if (result != null)
             {
                 Activate(result);
             }

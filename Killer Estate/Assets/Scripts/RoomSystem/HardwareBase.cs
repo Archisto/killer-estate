@@ -1,21 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillerEstate
 {
-    public class HardwareBase : LevelObject
+    public class HardwareBase : InteractableObject
     {
+        [Header("HardwareBase Specific")]
+
         [SerializeField]
         private bool _vital;
 
         [SerializeField]
         private Vector3 _hardwarePosition;
-
-        [SerializeField]
-        protected float _mouseClickRange = 1f;
-
-        private MouseController _mouse;
 
         public HardwareManager HardwareManager { get; private set; }
 
@@ -34,34 +32,18 @@ namespace KillerEstate
         /// <summary>
         /// Initializes the object.
         /// </summary>
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             HardwareManager = FindObjectOfType<HardwareManager>();
-            _mouse = GameManager.Instance.Mouse;
         }
 
-        /// <summary>
-        /// Updates the object.
-        /// </summary>
-        protected override void UpdateObject()
+        protected override void OnClick()
         {
-            if (Clicked() && Hardware == null)
+            if (Hardware == null)
             {
                 SetHardware(HardwareManager.GetRandomHardware(Vital));
             }
-
-            base.UpdateObject();
-        }
-
-        protected virtual bool Clicked()
-        {
-            return (_mouse.LeftButtonReleased
-                    && MouseWithinClickRange());
-        }
-
-        protected bool MouseWithinClickRange()
-        {
-            return (Vector3.Distance(_mouse.Position, transform.position) <= _mouseClickRange);
         }
 
         public bool SetHardware(Hardware hardware)
@@ -99,8 +81,9 @@ namespace KillerEstate
             SetHardware(null);
         }
 
-        private void OnDrawGizmos()
+        protected override void OnDrawGizmos()
         {
+            base.OnDrawGizmos();
             if (_vital)
             {
                 Gizmos.color = Color.yellow;

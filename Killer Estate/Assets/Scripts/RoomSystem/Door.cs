@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillerEstate
 {
-    public class Door : LevelObject
+    public class Door : InteractableObject
     {
+        [Header("Door Specific")]
+
         [SerializeField]
         private Room _room1;
 
@@ -15,44 +18,12 @@ namespace KillerEstate
         [SerializeField]
         private int _unlockCost = 100;
 
-        [SerializeField]
-        protected float _mouseClickRange = 1f;
-
-        private MouseController _mouse;
-
         public bool Unlocked { get; private set; }
 
-        /// <summary>
-        /// Initializes the object.
-        /// </summary>
-        private void Start()
+        protected override void OnClick()
         {
-            _mouse = GameManager.Instance.Mouse;
-        }
-
-        /// <summary>
-        /// Updates the object.
-        /// </summary>
-        protected override void UpdateObject()
-        {
-            if (Clicked())
-            {
-                // TODO: Unlocking
-                EnterOtherRoom();
-            }
-
-            base.UpdateObject();
-        }
-
-        protected virtual bool Clicked()
-        {
-            return (_mouse.LeftButtonReleased
-                    && MouseWithinClickRange());
-        }
-
-        protected bool MouseWithinClickRange()
-        {
-            return (Vector3.Distance(_mouse.Position, transform.position) <= _mouseClickRange);
+            // TODO: Unlocking
+            EnterOtherRoom();
         }
 
         public void EnterOtherRoom()
@@ -102,11 +73,6 @@ namespace KillerEstate
         {
             Unlocked = false;
             base.ResetObject();
-        }
-
-        private void OnDrawGizmos()
-        {
-            
         }
     }
 }

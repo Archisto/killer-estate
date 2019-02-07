@@ -22,6 +22,8 @@ namespace KillerEstate
 
         public bool RightButtonReleased { get; private set; }
 
+        public bool Dragging { get; set; }
+
         /// <summary>
         /// Updates the object once per frame.
         /// </summary>
@@ -53,6 +55,11 @@ namespace KillerEstate
 
         private void CheckInput()
         {
+            if (LeftButtonReleased)
+            {
+                Dragging = false;
+            }
+
             LeftButtonReleased = false;
             RightButtonReleased = false;
 

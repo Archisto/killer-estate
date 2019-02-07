@@ -83,6 +83,11 @@ namespace KillerEstate
             bool mouseHoveredOnWeapon = UpdateMouse();
             if (_mouseLeftButtonHeld && (_active || mouseHoveredOnWeapon))
             {
+                if (mouseHoveredOnWeapon && !_mouse.Dragging)
+                {
+                    _mouse.Dragging = true;
+                }
+
                 UpdateAim();
             }
         }

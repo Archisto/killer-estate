@@ -53,7 +53,7 @@ namespace KillerEstate
 
         protected override bool ReleaseMouse(bool tryToFire)
         {
-            _mouseButtonHeld = false;
+            _mouseLeftButtonHeld = false;
             if (_active)
             {
                 _active = false;
@@ -101,14 +101,13 @@ namespace KillerEstate
 
         protected override void Fire()
         {
-            Projectile projectile = _projectiles.GetPooledObject();
+            HitScanProjectile projectile = _base.HardwareManager.GetProjectile();
             if (projectile != null)
             {
-                projectile.transform.position = _projectileLaunchPoint.position;
-                projectile.SetDamage(GetDamage());
-                projectile.SetForce(12f);
-                projectile.Init(OnHit);
-                projectile.Launch(_lookVector);
+                projectile.Launch(GetDamage(),
+                                  _projectileLaunchPoint.position,
+                                  _targetPosition,
+                                  OnHit);
             }
 
             DepleteCharge(true);
@@ -137,6 +136,14 @@ namespace KillerEstate
                 Gizmos.color = Color.Lerp(Color.white, Color.red, _powerRatio);
             }
             Gizmos.DrawLine(transform.position, transform.position + Vector3.up * 3f);
+        }
+
+        protected override void DrawAimingGizmo()
+        {
+            if (CanFire())
+            {
+                base.DrawAimingGizmo();
+            }
         }
     }
 }

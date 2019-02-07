@@ -15,13 +15,16 @@ namespace KillerEstate
         [SerializeField]
         protected float _mouseClickRange = 1f;
 
-        //[SerializeField]
-        //private Hardware _hardware; // testing
+        private MouseController _mouse;
 
-        private HardwareManager _hwManager;
-        private Vector3 _mousePosition;
+        public HardwareManager HardwareManager { get; private set; }
 
         public Hardware Hardware { get; private set; }
+
+        public bool Vital
+        {
+            get { return _vital; }
+        }
 
         public Vector3 HardwarePosition
         {
@@ -33,7 +36,8 @@ namespace KillerEstate
         /// </summary>
         private void Start()
         {
-            _hwManager = FindObjectOfType<HardwareManager>();
+            HardwareManager = FindObjectOfType<HardwareManager>();
+            _mouse = GameManager.Instance.Mouse;
         }
 
         /// <summary>
@@ -41,40 +45,29 @@ namespace KillerEstate
         /// </summary>
         protected override void UpdateObject()
         {
-            UpdateMousePosition();
             if (Clicked() && Hardware == null)
             {
-                SetHardware(_hwManager.GetHardware());
+                SetHardware(HardwareManager.GetRandomHardware(Vital));
             }
 
             base.UpdateObject();
         }
 
-        protected virtual void UpdateMousePosition()
-        {
-            _mousePosition = GameManager.Instance.MousePosition;
-        }
-
         protected virtual bool Clicked()
         {
-            return (Input.GetMouseButtonDown(0)
+            return (_mouse.LeftButtonReleased
                     && MouseWithinClickRange());
         }
 
         protected bool MouseWithinClickRange()
         {
-            return (Vector3.Distance(_mousePosition, transform.position) <= _mouseClickRange);
+            return (Vector3.Distance(_mouse.Position, transform.position) <= _mouseClickRange);
         }
 
         public bool SetHardware(Hardware hardware)
         {
             if (hardware == null)
             {
-                WeaponMouse weapon = Hardware as WeaponMouse;
-                if (_vital && weapon != null && weapon == _hwManager.CurrentVitalWeapon)
-                {
-                    GameManager.Instance.EndGame(false);
-                }
                 Hardware = null;
                 return false;
             }
@@ -87,12 +80,23 @@ namespace KillerEstate
             {
                 Hardware = hardware;
                 Hardware.PlaceOnBase(this);
+
+                // When a weapon is set on a Vital Base,
+                // it immediately becomes the current Vital Weapon
+                // (Hardware can't be constructed from outside the room)
                 if (_vital && hardware.Type == HardwareType.Weapon)
                 {
-                    _hwManager.CurrentVitalWeapon = (Hardware as WeaponMouse);
+                    HardwareManager.CurrentVitalWeapon = Hardware as WeaponMouse;
                 }
+
                 return true;
             }
+        }
+
+        public void HandleHardwareDestruction(Hardware hardware)
+        {
+            HardwareManager.HandleHardwareDestruction(hardware, this);
+            SetHardware(null);
         }
 
         private void OnDrawGizmos()

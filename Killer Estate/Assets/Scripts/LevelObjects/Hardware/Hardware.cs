@@ -35,14 +35,15 @@ namespace KillerEstate
         [SerializeField, Range(0f, 1f)]
         protected float _chargeDepletionAmount = 0f;
 
-        protected Vector3 _mousePosition;
-        protected Vector3 _mousePositionOnButtonDown;
+        protected MouseController _mouse;
+        protected HardwareBase _base;
+        protected bool _mouseLeftButtonHeld;
         protected float _mouseDist;
         protected bool _active;
-        protected bool _mouseButtonHeld;
+        protected int _ammo;
+        protected bool _needsAmmo;
 
         private float _charge;
-        private HardwareBase _base;
 
         public HardwareType Type { get { return _type; } }
 
@@ -63,6 +64,7 @@ namespace KillerEstate
         protected virtual void Start()
         {
             Health = _maxHealth;
+            _mouse = GameManager.Instance.Mouse;
         }
 
         public virtual void PlaceOnBase(HardwareBase hardwareBase)
@@ -73,21 +75,15 @@ namespace KillerEstate
 
         protected bool UpdateMouse()
         {
-            UpdateMousePosition();
             bool mouseHoveredOnWeapon =
-                (!_mouseButtonHeld && MouseWithinClickRange());
+                (!_mouseLeftButtonHeld && MouseWithinClickRange());
             CheckIfMouseLeftButtonDown();
             return mouseHoveredOnWeapon;
         }
 
-        protected virtual void UpdateMousePosition()
-        {
-            _mousePosition = GameManager.Instance.MousePosition;
-        }
-
         protected virtual void CheckIfMouseLeftButtonDown()
         {
-            if (Input.GetMouseButton(0))
+            if (_mouse.LeftButtonDown)
             {
                 OnLeftMouseButtonDown();
             }
@@ -99,10 +95,9 @@ namespace KillerEstate
 
         protected virtual void OnLeftMouseButtonDown()
         {
-            if (!_mouseButtonHeld)
+            if (!_mouseLeftButtonHeld)
             {
-                _mouseButtonHeld = true;
-                _mousePositionOnButtonDown = _mousePosition;
+                _mouseLeftButtonHeld = true;
             }
         }
 
@@ -112,7 +107,7 @@ namespace KillerEstate
 
         protected virtual bool ReleaseMouse(bool tryToFire)
         {
-            _mouseButtonHeld = false;
+            _mouseLeftButtonHeld = false;
             if (_active)
             {
                 _active = false;
@@ -128,7 +123,7 @@ namespace KillerEstate
 
         protected bool MouseWithinClickRange()
         {
-            return (Vector3.Distance(_mousePosition, _clickAreaCenter.position) <= _mouseClickRange);
+            return (Vector3.Distance(_mouse.Position, _clickAreaCenter.position) <= _mouseClickRange);
         }
 
         protected bool MouseReachesMinDragRange()
@@ -176,22 +171,21 @@ namespace KillerEstate
                 return;
             }
 
-            Health -= amount;
+            //Health -= amount;
             if (Health <= 0)
             {
                 Debug.Log(name + " was destroyed!");
                 DestroyObject();
             }
-            else
-            {
-                Debug.Log(name + " took " + amount + " damage");
-            }
+            //else
+            //{
+            //    Debug.Log(name + " took " + amount + " damage");
+            //}
         }
 
         public override void DestroyObject()
         {
-            // TODO
-            _base.SetHardware(null);
+            _base.HandleHardwareDestruction(this);
             Destroy(gameObject);
             base.DestroyObject();
         }

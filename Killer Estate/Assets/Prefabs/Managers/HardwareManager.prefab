@@ -43,6 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b716870c5376f1c4e8d189d3553247f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hardwarePrefabs:
-  - {fileID: 7553747215796856620, guid: 3a4a98eff8e06d84ab746ac94051dd2b, type: 3}
+  _weaponPrefabs:
   - {fileID: 654726670252120357, guid: ceabf5dbcc58a3b418db334a0af7eee6, type: 3}
+  - {fileID: 7553747215796856620, guid: 3a4a98eff8e06d84ab746ac94051dd2b, type: 3}
+  _supportPrefabs:
+  - {fileID: 7003137133743284255, guid: 3575a077e519bb8439817e908cb6a913, type: 3}
+  _projectilePrefab: {fileID: 8620108061596869008, guid: cd6a7b5bee5b8d04fbe86efa63349793,
+    type: 3}
+  _maxProjectileCount: 10

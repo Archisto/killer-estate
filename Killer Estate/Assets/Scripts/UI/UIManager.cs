@@ -61,10 +61,10 @@ namespace KillerEstate.UI
                 }
             }
 
-            UpdateScore(GameManager.Instance.GetScore());
+            UpdateMoney(GameManager.Instance.Money);
         }
 
-        public void UpdateScore(int score)
+        public void UpdateMoney(int score)
         {
             _hud.UpdateScore(score);
         }
@@ -115,7 +115,7 @@ namespace KillerEstate.UI
 
         public void ResetUI()
         {
-            _hud.UpdateScore(GameManager.Instance.GetScore());
+            _hud.UpdateScore(GameManager.Instance.Money);
         }
     }
 }

@@ -32,31 +32,22 @@ namespace KillerEstate
         [Header("Projectiles")]
 
         [SerializeField]
-        protected int _maxProjectileCount = 5;
-
-        [SerializeField]
-        protected Projectile _projectilePrefab;
-
-        [SerializeField]
         protected Transform _projectileLaunchPoint;
 
         protected bool _reloading;
-        protected int _ammo;
-        protected Pool<Projectile> _projectiles;
         protected Timer _reloadTimer;
         protected Vector3 _lookVector;
         protected float _powerRatio;
         protected Vector3 _targetPosition;
         protected bool _targetAcquired;
-        protected bool _needsAmmo;
+        protected LineRenderer _projectileLine;
 
         protected override void Start()
         {
             base.Start();
-            _projectiles = new Pool<Projectile>
-                (_maxProjectileCount, false, _projectilePrefab);
             _reloadTimer = new Timer(_reloadTime, true);
             _needsAmmo = _maxAmmo > 0;
+            _projectileLine = _projectileLaunchPoint.GetComponent<LineRenderer>();
 
             if (_rotatingObj == null)
             {
@@ -92,7 +83,7 @@ namespace KillerEstate
         protected virtual void UpdateWeapon()
         {
             bool mouseHoveredOnWeapon = UpdateMouse();
-            if (_mouseButtonHeld && (_active || mouseHoveredOnWeapon))
+            if (_mouseLeftButtonHeld && (_active || mouseHoveredOnWeapon))
             {
                 UpdateAim();
             }
@@ -100,7 +91,7 @@ namespace KillerEstate
 
         protected override void CheckIfMouseLeftButtonDown()
         {
-            if (Input.GetMouseButton(0))
+            if (_mouse.LeftButtonDown)
             {
                 OnLeftMouseButtonDown();
             }
@@ -112,7 +103,7 @@ namespace KillerEstate
 
         protected override bool ReleaseMouse(bool tryToFire)
         {
-            _mouseButtonHeld = false;
+            _mouseLeftButtonHeld = false;
             if (_active)
             {
                 _active = false;
@@ -131,7 +122,7 @@ namespace KillerEstate
         {
             _active = true;
 
-            _lookVector = _mousePositionOnButtonDown - _mousePosition;
+            _lookVector = _mouse.LBDownPosition - _mouse.Position;
             _mouseDist = _lookVector.magnitude;
             if (CanAim())
             {
@@ -211,8 +202,10 @@ namespace KillerEstate
 
         protected abstract void Fire();
 
-        protected virtual void OnHit(Projectile projectile)
+        protected virtual void OnHit(Vector3 hitPosition)
         {
+            _projectileLine.SetPosition(0, _projectileLaunchPoint.position);
+            _projectileLine.SetPosition(1, hitPosition);
         }
 
         protected virtual void StartReloading()
@@ -262,7 +255,7 @@ namespace KillerEstate
 
             // Line from weapon to mouse (offset by the mouse cursor's initial inaccuracy)
             Vector3 offsetMousePosition =
-            _mousePosition + _clickAreaCenter.position - _mousePositionOnButtonDown;
+            _mouse.Position + _clickAreaCenter.position - _mouse.LBDownPosition;
 
             if (!MouseReachesMinDragRange())
             {
@@ -270,8 +263,7 @@ namespace KillerEstate
             }
             else
             {
-                Gizmos.color = Color.Lerp(Color.white, Color.red, _powerRatio);
-                Gizmos.DrawLine(_clickAreaCenter.position, _targetPosition);
+                DrawAimingGizmo();
 
                 if (MouseOutsideDragRange())
                 {
@@ -285,6 +277,7 @@ namespace KillerEstate
                 }
             }
 
+            // Drag line
             Gizmos.DrawLine(_clickAreaCenter.position, offsetMousePosition);
 
             // The target position
@@ -293,6 +286,12 @@ namespace KillerEstate
             //    Gizmos.color = Color.blue;
             //    Gizmos.DrawLine(_targetPosition, _targetPosition + Vector3.up * 5);
             //}
+        }
+
+        protected virtual void DrawAimingGizmo()
+        {
+            Gizmos.color = Color.Lerp(Color.white, Color.red, _powerRatio);
+            Gizmos.DrawLine(_clickAreaCenter.position, _targetPosition);
         }
     }
 }

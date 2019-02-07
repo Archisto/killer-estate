@@ -72,7 +72,6 @@ namespace KillerEstate
         private int _waitFramesBeforeSettingUpScene = 3;
         private int _framesWaited = 0;
 
-        private int _score;
         private int _waveNum;
         private Level _currentLevel;
         private List<Level> _levels;
@@ -103,9 +102,15 @@ namespace KillerEstate
 
         public bool GamePaused { get; private set; }
 
-        public Vector3 MousePosition { get; private set; }
+        public MouseController Mouse { get; private set; }
 
         public List<int> KeyCodes { get; private set; }
+
+        public Room CurrentRoom { get; set; }
+
+        public int Score { get; private set; }
+
+        public int Money { get; private set; }
 
         public bool PlayReady
         {
@@ -234,6 +239,7 @@ namespace KillerEstate
             UI = FindObjectOfType<UIManager>();
             UI.OnSceneChanged(State);
             Fade = FindObjectOfType<FadeToColor>();
+            Mouse = FindObjectOfType<MouseController>();
         }
 
         private void InitLevels()
@@ -274,10 +280,6 @@ namespace KillerEstate
                     //    _sceneJustStarted = false;
                     //}
                 }
-            }
-            else
-            {
-                UpdateMousePosition();
             }
         }
 
@@ -417,9 +419,10 @@ namespace KillerEstate
         private void StartNewGame()
         {
             Debug.Log("New game started");
-            _score = 0;
+            Score = 0;
+            Money = 0;
             _waveNum = 0;
-            UI.UpdateScore(_score);
+            UI.UpdateMoney(Money);
             _gameRunning = true;
         }
 
@@ -468,22 +471,41 @@ namespace KillerEstate
             Debug.Log("Now starting wave " + _waveNum);
         }
 
-        public int GetScore()
+        /// <summary>
+        /// Changes the score and money. If the <paramref name="change"/>
+        /// is negative, only money is affected.
+        /// </summary>
+        /// <param name="change">The change in score and money</param>
+        /// <param name="updateUIImmediately">Does the UI immediately
+        /// reflect the change</param>
+        /// <returns>Is there enough money to withdraw</returns>
+        public bool ChangeScore(int change, bool updateUIImmediately = true)
         {
-            return _score;
-        }
-
-        public void ChangeScore(int scoreChange, bool updateUIImmediately = true)
-        {
-            _score += scoreChange;
-            if (_score < 0)
+            if (change > 0)
             {
-                _score = 0;
+                Score += change;
             }
 
-            if (updateUIImmediately)
+            return ChangeMoney(change, updateUIImmediately);
+        }
+
+        private bool ChangeMoney(int change, bool updateUIImmediately)
+        {
+            if (change < 0 &&
+                Money + change < 0)
             {
-                UI.UpdateScore(_score);
+                return false;
+            }
+            else
+            {
+                Money += change;
+
+                if (updateUIImmediately)
+                {
+                    UI.UpdateMoney(Money);
+                }
+
+                return true;
             }
         }
 
@@ -508,15 +530,6 @@ namespace KillerEstate
             MusicPlayer.Instance.Stop();
             Debug.Log("Returning to the main menu");
             LoadScene(GameState.MainMenu);
-        }
-
-        private void UpdateMousePosition()
-        {
-            Vector3 mousePosition = Input.mousePosition;
-            mousePosition.z = 10f + 0.01f * mousePosition.y;
-            mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            mousePosition.y = 1f;
-            MousePosition = mousePosition;
         }
 
         public void AddKeyCode(int keyCode, bool addIfNew)

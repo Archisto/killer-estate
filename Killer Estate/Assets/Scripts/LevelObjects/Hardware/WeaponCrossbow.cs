@@ -28,14 +28,13 @@ namespace KillerEstate
 
         protected override void Fire()
         {
-            Projectile projectile = _projectiles.GetPooledObject();
+            HitScanProjectile projectile = _base.HardwareManager.GetProjectile();
             if (projectile != null)
             {
-                projectile.transform.position = _projectileLaunchPoint.position;
-                projectile.SetDamage(GetDamage());
-                projectile.SetForce(12f);
-                projectile.Init(OnHit);
-                projectile.Launch(_lookVector);
+                projectile.Launch(GetDamage(),
+                                  _projectileLaunchPoint.position,
+                                  _targetPosition,
+                                  OnHit);
             }
         }
     }

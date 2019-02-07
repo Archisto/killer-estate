@@ -26,6 +26,12 @@ namespace KillerEstate
             }
         }
 
+        public void GoTo(Transform t)
+        {
+            transform.position = t.position;
+            transform.rotation = t.rotation;
+        }
+
         private void UpdatePositionBetweenObjects(List<LevelObject> levelObjects)
         {
             Vector3 newPosition = Vector3.zero;

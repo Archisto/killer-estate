@@ -34,7 +34,8 @@ namespace KillerEstate
                 projectile.Launch(GetDamage(),
                                   _projectileLaunchPoint.position,
                                   _targetPosition,
-                                  OnHit);
+                                  OnHit,
+                                  0.4f);
             }
         }
     }

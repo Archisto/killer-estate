@@ -171,7 +171,7 @@ namespace KillerEstate
                 return;
             }
 
-            //Health -= amount;
+            Health -= amount;
             if (Health <= 0)
             {
                 Debug.Log(name + " was destroyed!");

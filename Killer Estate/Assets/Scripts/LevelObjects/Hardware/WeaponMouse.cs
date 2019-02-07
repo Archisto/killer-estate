@@ -40,14 +40,12 @@ namespace KillerEstate
         protected float _powerRatio;
         protected Vector3 _targetPosition;
         protected bool _targetAcquired;
-        protected LineRenderer _projectileLine;
 
         protected override void Start()
         {
             base.Start();
             _reloadTimer = new Timer(_reloadTime, true);
             _needsAmmo = _maxAmmo > 0;
-            _projectileLine = _projectileLaunchPoint.GetComponent<LineRenderer>();
 
             if (_rotatingObj == null)
             {
@@ -204,8 +202,6 @@ namespace KillerEstate
 
         protected virtual void OnHit(Vector3 hitPosition)
         {
-            _projectileLine.SetPosition(0, _projectileLaunchPoint.position);
-            _projectileLine.SetPosition(1, hitPosition);
         }
 
         protected virtual void StartReloading()

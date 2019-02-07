@@ -30,7 +30,7 @@ namespace KillerEstate
         protected override void UpdateObject()
         {
             base.UpdateObject();
-            UpdateChargeDepletion();
+            //UpdateChargeDepletion();
         }
 
         private void UpdateChargeDepletion()
@@ -107,7 +107,8 @@ namespace KillerEstate
                 projectile.Launch(GetDamage(),
                                   _projectileLaunchPoint.position,
                                   _targetPosition,
-                                  OnHit);
+                                  OnHit,
+                                  1f);
             }
 
             DepleteCharge(true);

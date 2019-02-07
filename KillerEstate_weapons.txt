@@ -1,0 +1,38 @@
+c = click
+cd = click and drag back
+cdo = click and drag back until out of range
+mcdo = cdo multiple times
+cs = click and shake
+mg = minigame
+sec = secondary (RMB), must be first selected with the mouse wheel
+fwr = fire when released
+fwc = fire when charged
+nw = not a weapon
+dc = each shot depletes charge
+mp = miss penalty
+ar = autoreload (takes some time)
+rtime = reloading takes some time
+all = attacks all valid targets
+weps = works in tandem with other valid weapons in the room
+
+- Crossbow:	cd, fwr, single, dmg = drag dist
+- Shotgun: 	cdo, spray, [reload: ar]
+- Gatling: 	cd, auto, [reload: cdo, rtime]
+- Wind-Up: 	cs(charge), fwr, cd(aim), dc, auto, [reload: cdo]
+- Revolver: 	sec, single, weps, [reload: mcdo]
+- Cannon:	c(charge), cdo(fire), dmg = charge, charge depletes quickly
+- Mortar:	cd, fwr, hits only at specified target, splash, [reload: ar]
+- Trapper: 	mcdo, target: windows, all, weps, [reload: ar]
+- Rhythm: 	mg, target: nearest enemy, single, weps, mp(mg)
+- Attack Dog: 	sec(aim), cs(charge), fwc, single
+- Spikes:	dc(set radius), fwr, creates a ring of one-shot traps, [reload: ar]
+- Blade:	cd(aim), cs(fire, side to side), short range, dmg = drag speed
+- Knife: 	sec, single, can't be placed
+- Time Bomb:	sec, fwc, single, splash, charge fills with a moderate pace, can't be placed
+- Toolbox:	nw, REDUCE window boarding TIME
+- Camera:	nw, INCREASE POINTS from killing enemies
+- Whetstone:	nw, INCREASE Knife DAMAGE, take damage when Knife is used
+- Reloader:	nw, INSTANTLY RELOAD hit weapons, cd, fwr, single, [reload: ar]
+- Scape Goat:	nw, HEAL weapons in the room by taking damage
+- Bright Light:	nw, AGGRO enemies
+- Chest:	nw, GIVE AN ITEM, c, already in the room, destroy after

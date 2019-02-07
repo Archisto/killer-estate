@@ -285,6 +285,149 @@ namespace KillerEstate
             return Vector3.Lerp(Vector3.Lerp(p0, p1, t), Vector3.Lerp(p1, p2, t), t);
         }
 
+        /// <summary>
+        /// Returns points on a line in 2D space, centered when
+        /// <see cref="pointCount"/> is equal to <see cref="maxPointCount"/>.
+        /// </summary>
+        /// <param name="position">The position of the line's center</param>
+        /// <param name="pointCount">Point count</param>
+        /// <param name="maxPointCount">The maximum point count which determines the center</param>
+        /// <param name="spacing">The distance between the points</param>
+        /// <returns>An array of points</returns>
+        public static Vector2[] GetCenteredPointsOnLine(Vector2 position,
+                                                        int pointCount,
+                                                        int maxPointCount,
+                                                        float spacing)
+        {
+            Vector2[] points = null;
+
+            int absoluteMaxPoints = 1000;
+            if (pointCount > absoluteMaxPoints)
+            {
+                Debug.LogError("Too many points! The maximum is "
+                    + absoluteMaxPoints + ".");
+            }
+            else if (pointCount >= 0 && maxPointCount >= 0)
+            {
+                points = new Vector2[pointCount];
+                position.x -= 0.5f * (maxPointCount - 1) * spacing;
+                for (int i = 0; i < pointCount; i++)
+                {
+                    points[i] = position;
+                    position.x += spacing;
+                }
+            }
+
+            return points;
+        }
+
+        /// <summary>
+        /// Returns points on a line in 3D space. The points' spacing
+        /// depends on the point count and the line's start and end point.
+        /// </summary>
+        /// <param name="startPoint">The start point</param>
+        /// <param name="endPoint">The end point</param>
+        /// <param name="pointCount">Point count</param>
+        /// <returns>An array of points</returns>
+        public static Vector3[] GetJustifiedPointsOnLine(Vector3 startPoint,
+                                                         Vector3 endPoint,
+                                                         int pointCount)
+        {
+            Vector3[] points = null;
+
+            int absoluteMaxPoints = 1000;
+            if (pointCount > absoluteMaxPoints)
+            {
+                Debug.LogError("Too many points! The maximum is "
+                    + absoluteMaxPoints + ".");
+            }
+            else if (pointCount == 1)
+            {
+                points = new Vector3[1];
+                points[0] = Vector3.Lerp(startPoint, endPoint, 0.5f);
+            }
+            else if (pointCount >= 2)
+            {
+                points = new Vector3[pointCount];
+                points[0] = startPoint;
+
+                if (pointCount >= 3)
+                {
+                    int remainderDistDivider = pointCount - 1;
+                    float ratioPart = 1f / remainderDistDivider;
+                    for (int i = 1; i < remainderDistDivider; i++)
+                    {
+                        float ratio = i * ratioPart;
+                        Vector3 position = Vector3.Lerp(startPoint, endPoint, ratio);
+                        points[i] = position;
+                    }
+                }
+
+                points[pointCount - 1] = endPoint;
+            }
+
+            return points;
+        }
+
+        /// <summary>
+        /// Returns points in a ring. If <see cref="pointCount"/> is larger than
+        /// <see cref="lapPointCount"/>, the points in every new lap can have an offset.
+        /// If <see cref="lapPointCount"/> is positive, the points will be inserted
+        /// rotating clockwise, if negative, anti-clockwise.
+        /// </summary>
+        /// <param name="position">The ring's center</param>
+        /// <param name="radius">The ring's radius</param>
+        /// <param name="pointCount">Point count</param>
+        /// <param name="lapPointCount">A lap's point count</param>
+        /// <param name="forward">The direction the ring is facing</param>
+        /// <param name="newLapAngleOffset">Point position offset for each new lap</param>
+        /// <returns>An array of points</returns>
+        public static Vector3[] GetPointsInRing(Vector3 position,
+                                                float radius,
+                                                int pointCount,
+                                                int lapPointCount,
+                                                Vector3 firstPointDir,
+                                                float newLapAngleOffset)
+        {
+            // TODO: Use 'firstPointDir' parameter.
+            // TODO: Facing any direction in 3D space depending on the 'forward' variable.
+
+            Vector3[] points = null;
+
+            int absoluteMaxPoints = 1000;
+            if (pointCount > absoluteMaxPoints)
+            {
+                Debug.LogError("Too many points! The maximum is "
+                    + absoluteMaxPoints + ".");
+            }
+            else if (pointCount >= 0)
+            {
+                points = new Vector3[pointCount];
+                float angleDifference = (Mathf.PI * 2f) / lapPointCount;
+                bool reverse = lapPointCount < 0;
+                int lap = 1;
+                float currentAngle = 0f;
+                //Vector3 forward = firstPointDir - position;
+                Vector3 direction = firstPointDir;
+                for (int i = 0; i < pointCount; i++)
+                {
+                    points[i] = position + direction * radius;
+                    currentAngle += angleDifference;
+
+                    if (newLapAngleOffset != 0f &&
+                        i + 1 >= lap * lapPointCount * (reverse ? -1 : 1))
+                    {
+                        lap++;
+                        currentAngle += newLapAngleOffset;
+                    }
+
+                    direction = new Vector3(Mathf.Sin(currentAngle), Mathf.Cos(currentAngle), 0);
+                }
+            }
+
+            return points;
+        }
+
         public static Vector3[] Get4CardinalDirections()
         {
             Vector3[] cardinalDirs = new Vector3[4];

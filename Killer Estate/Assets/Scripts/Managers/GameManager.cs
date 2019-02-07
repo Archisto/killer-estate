@@ -103,6 +103,8 @@ namespace KillerEstate
 
         public bool GamePaused { get; private set; }
 
+        public Vector3 MousePosition { get; private set; }
+
         public List<int> KeyCodes { get; private set; }
 
         public bool PlayReady
@@ -273,6 +275,10 @@ namespace KillerEstate
                     //}
                 }
             }
+            else
+            {
+                UpdateMousePosition();
+            }
         }
 
         private Level GetLevel(int level)
@@ -419,13 +425,13 @@ namespace KillerEstate
 
         public void EndGame(bool win)
         {
+            Debug.Log(win ? "You win!" : "You lose!");
             _gameRunning = false;
             UI.EndGame(win);
         }
 
         private void StartBattle()
         {
-            Debug.Log("hear!");
             WaveStatus = WaveState.Active;
             MusicPlayer.Instance.Play(1, true);
         }
@@ -502,6 +508,15 @@ namespace KillerEstate
             MusicPlayer.Instance.Stop();
             Debug.Log("Returning to the main menu");
             LoadScene(GameState.MainMenu);
+        }
+
+        private void UpdateMousePosition()
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = 10f + 0.01f * mousePosition.y;
+            mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            mousePosition.y = 1f;
+            MousePosition = mousePosition;
         }
 
         public void AddKeyCode(int keyCode, bool addIfNew)

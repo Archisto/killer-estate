@@ -1,0 +1,28 @@
+- Things found in the game:
+  - Rooms
+  - Windows
+  - Hardware
+    - Weapons
+    - Support Hardware
+  - Hardware Bases
+  - Vital Bases
+  - Hardware Blueprints?
+- Each room has one Vital Base in its center
+- Only a weapon can be in a Vital Base
+- By clicking on an empty Hardware Base, the player can place any Hardware there from a list
+  - The list contains Hardware of which Blueprints the player has found
+  - Construction costs points
+- If a Vital Weapon is under attack in any room, the player gets notified
+- One Vital Weapon is always selected as the current. If this is destroyed, the game ends
+  - If a Vital Weapon is destroyed while the player is in the room, the game ends
+  - If the current Vital Weapon is destroyed (if the player is in a room without one), the game ends
+- If the player enters a room in which the Vital Base is empty, the previous Vital Weapon stays as the current VW
+- Chests contain tickets for free one-time constructions of Hardware
+- Windows can be boarded up to slow down zombies that try to come through it
+  - Boarded up windows have a maximum of 5 hitpoints
+  - Boarding is done by keeping the mouse cursor near the window
+- Zombies attack in waves
+  - Between waves, the player has a brief pause where they can board windows and set down Hardware
+- Scrolling the middle mouse wheel changes the Secondary action (Knife, Time Bomb, Revolver, Remove Hardware, ...)
+- Critical hits?
+- The player earns points by killing zombies and boarding up windows

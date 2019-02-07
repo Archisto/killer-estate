@@ -23,7 +23,7 @@ namespace KillerEstate
 
         private Action<T> _initMethod;
 
-        public Pool( int poolSize, bool shouldGrow, T prefab )
+        public Pool(int poolSize, bool shouldGrow, T prefab)
         {
             _poolSize = poolSize;
             _shouldGrow = shouldGrow;
@@ -59,12 +59,12 @@ namespace KillerEstate
             }
         }
 
-        public Pool( int poolSize, bool shouldGrow, T prefab, Action<T> initMethod )
+        public Pool(int poolSize, bool shouldGrow, T prefab, Action<T> initMethod)
             : this(poolSize, shouldGrow, prefab)
         {
             _initMethod = initMethod;
 
-            foreach(var item in _pool)
+            foreach (var item in _pool)
             {
                 _initMethod(item);
             }
@@ -75,7 +75,7 @@ namespace KillerEstate
         /// </summary>
         /// <param name="isActive">Should the object be active when it is added to the pool or not.</param>
         /// <returns>The object added to the pool.</returns>
-        private T AddObject( bool isActive = false )
+        private T AddObject(bool isActive = false)
         {
             // Instantiate pooled objects under this parent.
             T go = Object.Instantiate(_objectPrefab);
@@ -98,14 +98,14 @@ namespace KillerEstate
         /// Called when the object is returned to the pool. Deactivates the object.
         /// </summary>
         /// <param name="component">Object to deactivate</param>
-        protected virtual void Deactivate( T component )
+        protected virtual void Deactivate(T component)
         {
             component.gameObject.SetActive(false);
         }
 
         public void DeactivateAllObjects()
         {
-            foreach(T component in _pool)
+            foreach (T component in _pool)
             {
                 LevelObject lo = component as LevelObject;
                 if (lo != null)
@@ -121,7 +121,7 @@ namespace KillerEstate
         /// Called when the object is fetched from the pool. Activates the object.
         /// </summary>
         /// <param name="component">Object to activate</param>
-        protected virtual void Activate( T component )
+        protected virtual void Activate(T component)
         {
             LevelObject lo = component as LevelObject;
             if (lo != null)
@@ -171,13 +171,13 @@ namespace KillerEstate
         /// </summary>
         /// <param name="component">The object which should be returned to the pool.</param>
         /// <returns>Could the object be returned back to the pool.</returns>
-        public bool ReturnObject( T component )
+        public bool ReturnObject(T component)
         {
             bool result = false;
 
-            foreach(var pooledObject in _pool)
+            foreach (var pooledObject in _pool)
             {
-                if(pooledObject == component)
+                if (pooledObject == component)
                 {
                     Deactivate(component);
                     result = true;
@@ -185,7 +185,7 @@ namespace KillerEstate
                 }
             }
 
-            if(!result)
+            if (!result)
             {
                 Debug.LogError("Tried to return an object which doesn't belong to this pool!");
             }

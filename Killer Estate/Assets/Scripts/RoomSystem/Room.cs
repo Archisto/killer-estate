@@ -12,6 +12,9 @@ namespace KillerEstate
         private bool _startingRoom;
 
         [SerializeField]
+        private Transform _cameraPosition;
+
+        [SerializeField]
         private List<HardwareBase> _hardwareBases;
 
         [SerializeField]
@@ -75,7 +78,7 @@ namespace KillerEstate
 
         public void Enter()
         {
-            _camera.GoTo(transform);
+            _camera.GoTo(_cameraPosition);
             GameManager.Instance.CurrentRoom = this;
 
             WeaponMouse vitalWeapon =

@@ -15,7 +15,7 @@ namespace KillerEstate.UI
 
         public void StartGame()
         {
-            GameManager.Instance.LoadNewGame();
+            GameManager.Instance.LoadLevel(1);
         }
 
         public void SetInstructionsActive(bool active)

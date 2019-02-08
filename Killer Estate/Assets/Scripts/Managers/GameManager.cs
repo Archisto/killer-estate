@@ -320,7 +320,7 @@ namespace KillerEstate
                 }
                 case GameState.Level:
                 {
-                    _sceneToLoad = LevelKey + _currentLevel;
+                    _sceneToLoad = LevelKey + _currentLevel.Number;
                     break;
                 }
             }

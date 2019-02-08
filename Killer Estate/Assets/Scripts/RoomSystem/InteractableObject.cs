@@ -39,12 +39,16 @@ namespace KillerEstate
         {
             if (IsInCurrentRoom())
             {
-                if (Clicked())
-                {
-                    OnClick();
-                }
-
+                UpdateInteraction();
                 base.UpdateObject();
+            }
+        }
+
+        protected virtual void UpdateInteraction()
+        {
+            if (Clicked())
+            {
+                OnClick();
             }
         }
 

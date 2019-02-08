@@ -51,23 +51,15 @@ namespace KillerEstate
             hpPositions = Utils.GetPointsInRing(transform.position, 1f, _maxHealth, _maxHealth, Vector3.up, 1f);
         }
 
-        /// <summary>
-        /// Updates the object.
-        /// </summary>
-        protected override void UpdateObject()
+        protected override void UpdateInteraction()
         {
-            if (IsInCurrentRoom())
+            if (WithinClickRange(_mouse.Position))
             {
-                if (MouseHovering())
-                {
-                    Repair();
-                }
-                else if (Repairing)
-                {
-                    _repairTimer.Reset();
-                }
-
-                base.UpdateObject();
+                Repair();
+            }
+            else if (Repairing)
+            {
+                _repairTimer.Reset();
             }
         }
 

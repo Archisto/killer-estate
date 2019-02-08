@@ -20,6 +20,12 @@ namespace KillerEstate
 
         public bool Unlocked { get; private set; }
 
+        protected override bool IsInCurrentRoom()
+        {
+            return GameManager.Instance.CurrentRoom == _room1
+                   || GameManager.Instance.CurrentRoom == _room2;
+        }
+
         protected override void OnClick()
         {
             // TODO: Unlocking

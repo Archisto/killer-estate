@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KillerEstate
 {
-    public abstract class Hardware : LevelObject
+    public abstract class Hardware : LevelObject, IDamageReceiver
     {
         [Header("Hardware Common")]
 

@@ -95,6 +95,23 @@ namespace KillerEstate
             return -1;
         }
 
+        public static bool IsOnLayer(GameObject obj, params string[] layerNames)
+        {
+            if (obj != null && layerNames.Length > 0)
+            {
+                int objLayer = obj.layer;
+                for (int i = 0; i < layerNames.Length; i++)
+                {
+                    if (objLayer == LayerMask.NameToLayer(layerNames[i]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static float Ratio(float value, float lowBound, float highBound)
         {
             if (value <= lowBound)

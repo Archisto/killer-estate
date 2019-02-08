@@ -56,16 +56,19 @@ namespace KillerEstate
         /// </summary>
         protected override void UpdateObject()
         {
-            if (MouseHovering())
+            if (IsInCurrentRoom())
             {
-                Repair();
-            }
-            else if (Repairing)
-            {
-                _repairTimer.Reset();
-            }
+                if (MouseHovering())
+                {
+                    Repair();
+                }
+                else if (Repairing)
+                {
+                    _repairTimer.Reset();
+                }
 
-            base.UpdateObject();
+                base.UpdateObject();
+            }
         }
 
         public void TakeDamage(int damage)

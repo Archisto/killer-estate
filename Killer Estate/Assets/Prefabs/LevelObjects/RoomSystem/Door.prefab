@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5441530044749664967}
   - component: {fileID: 5441530044749664966}
   - component: {fileID: 5441530044749664969}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14346f7b61d61984685815f703c2ccbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mouseClickRange: 1
   _room1: {fileID: 0}
   _room2: {fileID: 0}
   _unlockCost: 100

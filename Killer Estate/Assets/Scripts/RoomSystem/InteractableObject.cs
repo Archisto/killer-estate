@@ -12,6 +12,7 @@ namespace KillerEstate
         protected float _mouseClickRange = 1f;
 
         protected MouseController _mouse;
+        protected Room _room;
 
         /// <summary>
         /// Initializes the object.
@@ -21,17 +22,30 @@ namespace KillerEstate
             _mouse = GameManager.Instance.Mouse;
         }
 
+        public virtual void SetRoom(Room room)
+        {
+            _room = room;
+        }
+
+        protected virtual bool IsInCurrentRoom()
+        {
+            return GameManager.Instance.CurrentRoom == _room;
+        }
+
         /// <summary>
         /// Updates the object.
         /// </summary>
         protected override void UpdateObject()
         {
-            if (Clicked())
+            if (IsInCurrentRoom())
             {
-                OnClick();
-            }
+                if (Clicked())
+                {
+                    OnClick();
+                }
 
-            base.UpdateObject();
+                base.UpdateObject();
+            }
         }
 
         protected virtual bool Clicked()

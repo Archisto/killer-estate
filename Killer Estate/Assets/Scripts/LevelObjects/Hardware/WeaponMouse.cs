@@ -205,8 +205,17 @@ namespace KillerEstate
 
         protected abstract void Fire();
 
-        protected virtual void OnHit(Vector3 hitPosition)
+        protected virtual void OnHit(GameObject hitObj, Vector3 hitPosition)
         {
+            if (hitObj != null)
+            {
+                Debug.Log("Hit " + hitObj.name);
+                IDamageReceiver dmgRec = hitObj.transform.GetComponent<IDamageReceiver>();
+                if (dmgRec != null)
+                {
+                    dmgRec.TakeDamage(GetDamage());
+                }
+            }
         }
 
         protected virtual void StartReloading()

@@ -31,15 +31,8 @@ namespace KillerEstate
         {
             _camera = FindObjectOfType<CameraController>();
             _hwManager = FindObjectOfType<HardwareManager>();
-
-            if (_hardwareBases.Count > 0)
-            {
-                InitHardwareBases();
-            }
-            else
-            {
-                Debug.LogError("The Room doesn't any Hardware Bases.");
-            }
+            InitHardwareBases();
+            InitWindows();
 
             if (StartingRoom)
             {
@@ -50,10 +43,33 @@ namespace KillerEstate
 
         private void InitHardwareBases()
         {
-            VitalHardwareBase = _hardwareBases.FirstOrDefault(hwb => hwb.Vital);
-            if (VitalHardwareBase == null)
+            if (_hardwareBases.Count > 0)
             {
-                Debug.LogError("The Room doesn't have a Vital Hardware Base.");
+                foreach (HardwareBase hwBase in _hardwareBases)
+                {
+                    hwBase.SetRoom(this);
+                }
+
+                VitalHardwareBase = _hardwareBases.FirstOrDefault(hwb => hwb.Vital);
+                if (VitalHardwareBase == null)
+                {
+                    Debug.LogError("The Room doesn't have a Vital Hardware Base.");
+                }
+            }
+            else
+            {
+                Debug.LogError("The Room doesn't any Hardware Bases.");
+            }
+        }
+
+        private void InitWindows()
+        {
+            if (_windows.Count > 0)
+            {
+                foreach (Window window in _windows)
+                {
+                    window.SetRoom(this);
+                }
             }
         }
 

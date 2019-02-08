@@ -104,8 +104,7 @@ namespace KillerEstate
             HitScanProjectile projectile = _base.HardwareManager.GetProjectile();
             if (projectile != null)
             {
-                projectile.Launch(GetDamage(),
-                                  _projectileLaunchPoint.position,
+                projectile.Launch(_projectileLaunchPoint.position,
                                   _targetPosition,
                                   OnHit,
                                   1f);

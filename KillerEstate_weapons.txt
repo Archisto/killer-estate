@@ -15,6 +15,7 @@ rtime = reloading takes some time
 all = attacks all valid targets
 weps = works in tandem with other valid weapons in the room
 
+Weapons
 - Crossbow:	cd, fwr, single, dmg = drag dist
 - Shotgun: 	cdo, spray, [reload: ar]
 - Gatling: 	cd, auto, [reload: cdo, rtime]
@@ -29,6 +30,8 @@ weps = works in tandem with other valid weapons in the room
 - Blade:	cd(aim), cs(fire, side to side), short range, dmg = drag speed
 - Knife: 	sec, single, can't be placed
 - Time Bomb:	sec, fwc, single, splash, charge fills with a moderate pace, can't be placed
+
+Support
 - Toolbox:	nw, REDUCE window boarding TIME
 - Camera:	nw, INCREASE POINTS from killing enemies
 - Whetstone:	nw, INCREASE Knife DAMAGE, take damage when Knife is used
@@ -36,3 +39,11 @@ weps = works in tandem with other valid weapons in the room
 - Scape Goat:	nw, HEAL weapons in the room by taking damage
 - Bright Light:	nw, AGGRO enemies
 - Chest:	nw, GIVE AN ITEM, c, already in the room, destroy after
+
+Power-Ups
++Damage:	weapons do more damage, red
++Score:		every kill yields more score, yellow
++Ammo:		refills ammo, blue
++Health:	heals Hardware, green
++Clear:		kills enemies, orange
+Tiers: +, Major, Superior, Extreme, Ludicrous

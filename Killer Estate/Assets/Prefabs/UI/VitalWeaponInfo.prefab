@@ -54,10 +54,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7180cd54fb54c564f8b231dd32082398, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _vitalPortraitColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _normalPortraitColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _healthGoodColor: {r: 0, g: 1, b: 0, a: 1}
   _healthBadColor: {r: 1, g: 0, b: 0, a: 1}
   _selectionIconColor: {r: 0.3764706, g: 0.56078434, b: 0.9607843, a: 1}
   _badHealthPercentageThreshold: 0.5
+  _dangerIconMaxScale: 1.1
+  _dangerIconScaleChangeDuration: 0.5
   _healthText: {fileID: 7818878582259643693}
   _roomText: {fileID: 4309124252121913532}
   _weaponIcon: {fileID: 1657688627547385972}

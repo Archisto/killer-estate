@@ -25,6 +25,12 @@ namespace KillerEstate.UI
         [SerializeField, Range(0.05f, 0.95f)]
         private float _badHealthPercentageThreshold = 0.5f;
 
+        [SerializeField, Range(1f, 1.5f)]
+        private float _dangerIconMaxScale = 1.1f;
+
+        [SerializeField, Range(0.1f, 1.5f)]
+        private float _dangerIconScaleChangeDuration = 1f;
+
         [SerializeField]
         private Text _healthText;
 
@@ -47,27 +53,31 @@ namespace KillerEstate.UI
 
         private bool _showSelectionIcon;
         private bool _showDangerIcon;
+        private Timer _dangerIconPulsatingTimer;
 
         /// <summary>
         /// Initializes the object.
         /// </summary>
-        //private void Start()
-        //{
-        //}
+        private void Start()
+        {
+            _dangerIconPulsatingTimer = new Timer(_dangerIconScaleChangeDuration, false);
+        }
 
         /// <summary>
         /// Updates the object once per frame.
         /// </summary>
-        //private void Update()
-        //{
-        //    if (!GameManager.Instance.GamePaused)
-        //    {
-        //        if (_weapon != null)
-        //        {
-        //            UpdateWeaponInfo();
-        //        }
-        //    }
-        //}
+        private void Update()
+        {
+            if (_dangerIconPulsatingTimer.Active)
+            {
+                UpdateWarningIconScale();
+
+                if (_dangerIconPulsatingTimer.Check())
+                {
+                    _dangerIconPulsatingTimer.Activate();
+                }
+            }
+        }
 
         public void UpdateHealth(int health)
         {
@@ -86,6 +96,23 @@ namespace KillerEstate.UI
                     _healthText.color = _healthGoodColor;
                 }
             }
+        }
+
+        private void UpdateWarningIconScale()
+        {
+            float ratio = _dangerIconPulsatingTimer.GetRatio();
+            float scale;
+            if (ratio < 0.5f)
+            {
+                scale = Mathf.Lerp(1f, _dangerIconMaxScale, ratio * 2);
+            }
+            else
+            {
+                scale = Mathf.Lerp(_dangerIconMaxScale, 1f, ratio * 2 - 1f);
+            }
+
+            Vector3 newScale = new Vector3(scale, scale, 1f);
+            _sideIcon.transform.localScale = newScale;
         }
 
         public void SetWeapon(WeaponMouse weapon)
@@ -114,12 +141,14 @@ namespace KillerEstate.UI
 
         public void ShowSelectionIcon()
         {
+            ResetDangerIconPulsating();
             _sideIcon.color = _selectionIconColor;
             ShowSideIcon(_selectionIcon);
         }
 
         public void ShowDangerIcon()
         {
+            StartDangerIconPulsating();
             _sideIcon.color = Color.white;
             ShowSideIcon(_dangerIcon);
         }
@@ -139,7 +168,27 @@ namespace KillerEstate.UI
 
         public void HideSideIcon()
         {
+            ResetDangerIconPulsating();
             _sideIcon.gameObject.SetActive(false);
+        }
+
+        private void StartDangerIconPulsating()
+        {
+            if (!_dangerIconPulsatingTimer.Active)
+            {
+                _dangerIconPulsatingTimer.Activate();
+            }
+        }
+
+        private void ResetDangerIconPulsating()
+        {
+            if (_dangerIconPulsatingTimer != null
+                && (_dangerIconPulsatingTimer.Active ||
+                    _dangerIconPulsatingTimer.Finished))
+            {
+                _dangerIconPulsatingTimer.Reset();
+                _sideIcon.transform.localScale = Vector3.one;
+            }
         }
     } 
 }

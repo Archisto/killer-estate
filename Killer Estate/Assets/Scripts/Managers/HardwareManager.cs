@@ -29,8 +29,9 @@ namespace KillerEstate
 
         private List<Hardware> _hardwarePrefabs;
         protected Pool<HitScanProjectile> _projectiles;
-        private Room[] _rooms;
         private WeaponMouse _currentVitalWeapon;
+
+        public Room[] Rooms { get; private set; }
 
         public WeaponMouse CurrentVitalWeapon
         {
@@ -59,7 +60,7 @@ namespace KillerEstate
 
             _projectiles = new Pool<HitScanProjectile>
                 (_maxProjectileCount, false, _projectilePrefab);
-            _rooms = FindObjectsOfType<Room>();
+            Rooms = FindObjectsOfType<Room>();
         }
 
         public Hardware GetRandomHardware(bool mustBeWeapon)
@@ -76,7 +77,7 @@ namespace KillerEstate
                 randomIndex = Random.Range(0, _hardwarePrefabs.Count);
                 hw = Instantiate(_hardwarePrefabs[randomIndex]);
             }
-
+            hw.HealthToMax();
             return hw;
         }
 
@@ -88,11 +89,16 @@ namespace KillerEstate
         public void HandleHardwareDestruction(Hardware hw, HardwareBase hwBase)
         {
             WeaponMouse weapon = hw as WeaponMouse;
-            if (hwBase.Vital && weapon != null)
+            if (weapon != null)
             {
-                if (weapon == CurrentVitalWeapon)
+                if (hwBase.Vital)
                 {
-                    GameManager.Instance.EndGame(false);
+                    if (weapon == CurrentVitalWeapon)
+                    {
+                        GameManager.Instance.EndGame(false);
+                    }
+
+                    GameManager.Instance.UI.DeactivateWeaponInfo(weapon);
                 }
             }
         }

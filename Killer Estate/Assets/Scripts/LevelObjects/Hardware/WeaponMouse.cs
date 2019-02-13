@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using KillerEstate.UI;
 
 namespace KillerEstate
 {
@@ -34,12 +35,14 @@ namespace KillerEstate
         [SerializeField]
         protected Transform _projectileLaunchPoint;
 
+        protected float _powerRatio;
         protected bool _reloading;
+        protected bool _targetAcquired;
         protected Timer _reloadTimer;
         protected Vector3 _lookVector;
-        protected float _powerRatio;
         protected Vector3 _targetPosition;
-        protected bool _targetAcquired;
+
+        public VitalWeaponInfo Info { get; protected set; }
 
         protected override void Start()
         {
@@ -62,6 +65,12 @@ namespace KillerEstate
 
             // TODO: Check how much ammo is left.
             _ammo = _maxAmmo;
+        }
+
+        public virtual void SetInfoUI(VitalWeaponInfo info)
+        {
+            Info = info;
+            Info.ShowSelectionIcon();
         }
 
         protected override void UpdateObject()
@@ -209,11 +218,24 @@ namespace KillerEstate
         {
             if (hitObj != null)
             {
-                Debug.Log("Hit " + hitObj.name);
+                //Debug.Log("Hit " + hitObj.name);
                 IDamageReceiver dmgRec = hitObj.transform.GetComponent<IDamageReceiver>();
                 if (dmgRec != null)
                 {
                     dmgRec.TakeDamage(GetDamage());
+                }
+            }
+        }
+
+        public override void TakeDamage(int amount)
+        {
+            base.TakeDamage(amount);
+            if (Info != null)
+            {
+                Info.UpdateHealth(Health);
+                if (Room != GameManager.Instance.CurrentRoom)
+                {
+                    Info.ShowDangerIcon();
                 }
             }
         }

@@ -47,6 +47,8 @@ namespace KillerEstate
 
         public HardwareType Type { get { return _type; } }
 
+        public int MaxHealth { get { return _maxHealth; } }
+
         public virtual int Health { get; protected set; }
 
         public float Charge
@@ -61,10 +63,16 @@ namespace KillerEstate
             }
         }
 
+        public Room Room { get { return _base.Room; } }
+
         protected virtual void Start()
         {
-            Health = _maxHealth;
             _mouse = GameManager.Instance.Mouse;
+        }
+
+        public void HealthToMax()
+        {
+            Health = _maxHealth;
         }
 
         public virtual void PlaceOnBase(HardwareBase hardwareBase)
@@ -164,7 +172,7 @@ namespace KillerEstate
             return Charge;
         }
 
-        public void TakeDamage(int amount)
+        public virtual void TakeDamage(int amount)
         {
             if (Health == 0)
             {
@@ -192,7 +200,7 @@ namespace KillerEstate
 
         public override void ResetObject()
         {
-            Health = _maxHealth;
+            HealthToMax();
             base.ResetObject();
         }
     }

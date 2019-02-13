@@ -374,6 +374,14 @@ namespace KillerEstate
             if (_gameJustStarted)
             {
                 _gameJustStarted = false;
+
+                // Initializes a level if the game
+                // was started straight from one
+                if (State == GameState.Level)
+                {
+                    InitLevel();
+                }
+
                 return;
             }
 
@@ -399,6 +407,11 @@ namespace KillerEstate
                     InitLevel();
                     break;
                 }
+                default:
+                {
+                    Debug.LogError("GameState: " + State);
+                    break;
+                }
             }
         }
 
@@ -422,7 +435,7 @@ namespace KillerEstate
             Score = 0;
             Money = 0;
             _waveNum = 0;
-            UI.UpdateMoney(Money);
+            UI.UpdateScore(Money);
             _gameRunning = true;
         }
 
@@ -502,7 +515,7 @@ namespace KillerEstate
 
                 if (updateUIImmediately)
                 {
-                    UI.UpdateMoney(Money);
+                    UI.UpdateScore(Money);
                 }
 
                 return true;

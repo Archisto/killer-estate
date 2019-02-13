@@ -14,6 +14,8 @@ namespace KillerEstate
         protected MouseController _mouse;
         protected Room _room;
 
+        public Room Room { get { return _room; } }
+
         /// <summary>
         /// Initializes the object.
         /// </summary>

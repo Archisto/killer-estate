@@ -41,6 +41,7 @@ namespace KillerEstate
             {
                 Enter();
                 VitalHardwareBase.SetHardware(_hwManager.GetRandomHardware(true));
+                VitalHardwareBase.InitVitalWeaponInfo();
             }
         }
 
@@ -78,25 +79,46 @@ namespace KillerEstate
 
         public void Enter()
         {
-            _camera.GoTo(_cameraPosition);
+            if (GameManager.Instance.CurrentRoom != null)
+            {
+                GameManager.Instance.CurrentRoom.Exit();
+            }
+
             GameManager.Instance.CurrentRoom = this;
+            _camera.GoTo(_cameraPosition);
 
             WeaponMouse vitalWeapon =
                 VitalHardwareBase.Hardware as WeaponMouse;
-            if (vitalWeapon != null &&
-                _hwManager.CurrentVitalWeapon != vitalWeapon)
+            if (vitalWeapon != null)
             {
-                SetCurrentVitalWeapon(vitalWeapon);
+                if (_hwManager.CurrentVitalWeapon != vitalWeapon)
+                {
+                    SetCurrentVitalWeapon(vitalWeapon);
+                }
+
+                vitalWeapon.Info.ShowSelectionIcon();
             }
-            
+
             Debug.Log("Entered room " + name);
+        }
+
+        public void Exit()
+        {
+            WeaponMouse vitalWeapon =
+                VitalHardwareBase.Hardware as WeaponMouse;
+            if (vitalWeapon != null)
+            {
+                vitalWeapon.Info.HideSideIcon();
+            }
         }
 
         private void SetCurrentVitalWeapon(WeaponMouse weapon)
         {
             if (weapon != null)
             {
+                _hwManager.CurrentVitalWeapon.Info.UpdatePortraitColor(false);
                 _hwManager.CurrentVitalWeapon = weapon;
+                _hwManager.CurrentVitalWeapon.Info.UpdatePortraitColor(true);
             }
             else
             {

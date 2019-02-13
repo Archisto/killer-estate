@@ -16,12 +16,21 @@ namespace KillerEstate.UI
         [SerializeField]
         private HeadsUpDisplay _hud;
 
+        [SerializeField]
+        private Transform _vitalWeaponInfoParent;
+
+        [SerializeField]
+        private VitalWeaponInfo _vitalWeaponInfoPrefab;
+
         private Canvas _canvas;
+        private Camera _camera;
+        private HardwareManager _hwManager;
         private Vector2 _canvasSize;
         private Vector2 _uiOffset;
-        private Camera _camera;
         private InputController _input;
         private Vector3[] _targetPositions;
+        private List<VitalWeaponInfo> _vitalWeaponInfos;
+        private int _activeVitalWeaponInfoCount;
 
         /// <summary>
         /// Initializes the object.
@@ -31,6 +40,12 @@ namespace KillerEstate.UI
             _canvas = GetComponent<Canvas>();
             UpdateCanvasSize();
             _camera = FindObjectOfType<CameraController>().GetComponent<Camera>();
+
+            if (GameManager.Instance.State == GameManager.GameState.Level)
+            {
+                _hwManager = FindObjectOfType<HardwareManager>();
+                GenerateVitalWeaponInfos();
+            }
         }
 
         /// <summary>
@@ -61,10 +76,68 @@ namespace KillerEstate.UI
                 }
             }
 
-            UpdateMoney(GameManager.Instance.Money);
+            UpdateScore(GameManager.Instance.Money);
         }
 
-        public void UpdateMoney(int score)
+        private void GenerateVitalWeaponInfos()
+        {
+            _vitalWeaponInfos = new List<VitalWeaponInfo>();
+            for (int i = 0; i < _hwManager.Rooms.Length; i++)
+            {
+                VitalWeaponInfo info = Instantiate
+                    (_vitalWeaponInfoPrefab, _vitalWeaponInfoParent);
+                _vitalWeaponInfos.Add(info);
+                info.gameObject.SetActive(false);
+            }
+        }
+
+        public VitalWeaponInfo ActivateWeaponInfo(WeaponMouse weapon)
+        {
+            VitalWeaponInfo activatedInfo = null;
+            foreach (VitalWeaponInfo info in _vitalWeaponInfos)
+            {
+                if (!info.gameObject.activeSelf)
+                {
+                    info.SetWeapon(weapon);
+                    info.transform.SetSiblingIndex(0);
+                    info.gameObject.SetActive(true);
+                    activatedInfo = info;
+                    _activeVitalWeaponInfoCount++;
+                    break;
+                }
+            }
+
+            if (activatedInfo == null)
+            {
+                Debug.LogError("No more available VitalWeaponInfos.");
+            }
+
+            return activatedInfo;
+        }
+
+        public void DeactivateWeaponInfo(WeaponMouse weapon)
+        {
+            bool infoDeactivated = false;
+            foreach (VitalWeaponInfo info in _vitalWeaponInfos)
+            {
+                if (info.gameObject.activeSelf && info.Weapon == weapon)
+                {
+                    info.SetWeapon(null);
+                    info.gameObject.SetActive(false);
+                    infoDeactivated = true;
+                    _activeVitalWeaponInfoCount--;
+                    break;
+                }
+            }
+
+            if (!infoDeactivated)
+            {
+                Debug.LogError
+                    ("No VitalWeaponInfo belonging to that weapon is active.");
+            }
+        }
+
+        public void UpdateScore(int score)
         {
             _hud.UpdateScore(score);
         }

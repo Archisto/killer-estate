@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VitalWeaponInfo = KillerEstate.UI.VitalWeaponInfo;
 
 namespace KillerEstate
 {
@@ -42,7 +43,9 @@ namespace KillerEstate
         {
             if (Hardware == null)
             {
-                SetHardware(HardwareManager.GetRandomHardware(Vital));
+                Hardware hw = HardwareManager.GetRandomHardware(Vital);
+                SetHardware(hw);
+                InitVitalWeaponInfo();
             }
         }
 
@@ -68,10 +71,27 @@ namespace KillerEstate
                 // (Hardware can't be constructed from outside the room)
                 if (_vital && hardware.Type == HardwareType.Weapon)
                 {
+                    if (HardwareManager.CurrentVitalWeapon != null)
+                    {
+                        HardwareManager.CurrentVitalWeapon.Info.UpdatePortraitColor(false);
+                    }
                     HardwareManager.CurrentVitalWeapon = Hardware as WeaponMouse;
                 }
 
                 return true;
+            }
+        }
+
+        public void InitVitalWeaponInfo()
+        {
+            if (Vital && Hardware != null)
+            {
+                WeaponMouse weapon = Hardware as WeaponMouse;
+                if (weapon != null)
+                {
+                    VitalWeaponInfo info = GameManager.Instance.UI.ActivateWeaponInfo(weapon);
+                    weapon.SetInfoUI(info);
+                }
             }
         }
 

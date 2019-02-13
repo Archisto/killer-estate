@@ -47,3 +47,10 @@ Power-Ups
 +Health:	heals Hardware, green
 +Clear:		kills enemies, orange
 Tiers: +, Major, Superior, Extreme, Ludicrous
+
+Stats
+- Score:	score from killing enemies and boarding up windows
+- Kills:	enemies killed
+- Sisu:		waves survived
+- Palo:		rooms opened
+- Huoli:	Vital Weapons protected (rooms entered while the VW is under attack without leaving and letting it get destroyed)

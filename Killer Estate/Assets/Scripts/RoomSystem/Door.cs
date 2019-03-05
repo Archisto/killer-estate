@@ -7,6 +7,13 @@ namespace KillerEstate
 {
     public class Door : InteractableObject
     {
+        private enum AttachedRoom
+        {
+            None = 0,
+            Room1 = 1,
+            Room2 = 2
+        }
+
         [Header("Door Specific")]
 
         [SerializeField]
@@ -20,6 +27,14 @@ namespace KillerEstate
 
         public bool Unlocked { get; private set; }
 
+        public override bool Interactable
+        {
+            get
+            {
+                return _room1 != null && _room2 != null;
+            }
+        }
+
         protected override bool IsInCurrentRoom()
         {
             return GameManager.Instance.CurrentRoom == _room1
@@ -28,31 +43,55 @@ namespace KillerEstate
 
         protected override void OnClick()
         {
-            // TODO: Unlocking
-            EnterOtherRoom();
-        }
-
-        public void EnterOtherRoom()
-        {
-            if (_room1 != null && _room2 != null)
+            if (Interactable)
             {
-                Room currRoom = GameManager.Instance.CurrentRoom;
-                if (currRoom == _room1)
+                if (!Unlocked)
                 {
-                    _room2.Enter();
-                }
-                else if (currRoom == _room2)
-                {
-                    _room1.Enter();
+                    TryUnlock();
                 }
                 else
                 {
-                    Debug.LogError("The door can't be used from this room.");
+                    EnterOtherRoom();
                 }
             }
             else
             {
-                Debug.LogError("One or both rooms are null.");
+                Debug.LogError("The door cannot be used! "
+                    + "One or both rooms are unset.");
+            }
+        }
+
+        private AttachedRoom GetCurrentAttachedRoom()
+        {
+            Room currRoom = GameManager.Instance.CurrentRoom;
+            if (currRoom == _room1)
+            {
+                return AttachedRoom.Room1;
+            }
+            else if (currRoom == _room2)
+            {
+                return AttachedRoom.Room2;
+            }
+            else
+            {
+                return AttachedRoom.None;
+            }
+        }
+
+        public void EnterOtherRoom()
+        {
+            AttachedRoom currRoom = GetCurrentAttachedRoom();
+            if (currRoom == AttachedRoom.Room1)
+            {
+                _room2.Enter();
+            }
+            else if (currRoom == AttachedRoom.Room2)
+            {
+                _room1.Enter();
+            }
+            else
+            {
+                Debug.LogError("The door can't be used from this room.");
             }
         }
 
@@ -63,6 +102,16 @@ namespace KillerEstate
                 if (GameManager.Instance.ChangeScore(-1 * _unlockCost))
                 {
                     Unlocked = true;
+
+                    AttachedRoom currRoom = GetCurrentAttachedRoom();
+                    if (currRoom == AttachedRoom.Room1)
+                    {
+                        _room2.Open = true;
+                    }
+                    else if (currRoom == AttachedRoom.Room2)
+                    {
+                        _room1.Open = true;
+                    }
                 }
                 else
                 {
@@ -79,6 +128,17 @@ namespace KillerEstate
         {
             Unlocked = false;
             base.ResetObject();
+        }
+
+        protected override void OnDrawGizmos()
+        {
+            base.OnDrawGizmos();
+
+            if (Interactable && Unlocked)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(transform.position, 1f);
+            }
         }
     }
 }

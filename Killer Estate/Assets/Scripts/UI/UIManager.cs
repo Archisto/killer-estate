@@ -176,14 +176,20 @@ namespace KillerEstate.UI
         }
 
         public void MoveUIObjToWorldPoint(Image uiObj,
-                                          Vector3 worldPoint,
+                                          Vector3 worldPosition,
                                           Vector2 screenSpaceOffset)
         {
-            Vector2 viewPortPos = _camera.WorldToViewportPoint(worldPoint);
+            uiObj.transform.localPosition =
+                GetScreenSpacePosition(worldPosition, screenSpaceOffset);
+        }
+
+        public Vector2 GetScreenSpacePosition(Vector3 worldPosition,
+                                              Vector2 screenSpaceOffset)
+        {
+            Vector2 viewPortPos = _camera.WorldToViewportPoint(worldPosition);
             Vector2 proportionalPosition = new Vector2
                 (viewPortPos.x * _canvasSize.x, viewPortPos.y * _canvasSize.y);
-            uiObj.transform.localPosition =
-                proportionalPosition + _uiOffset + screenSpaceOffset;
+            return proportionalPosition + _uiOffset + screenSpaceOffset;
         }
 
         public void ResetUI()

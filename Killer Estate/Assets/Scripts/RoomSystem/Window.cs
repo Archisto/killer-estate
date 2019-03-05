@@ -40,6 +40,11 @@ namespace KillerEstate
             get { return _repairTimer.GetRatio(); }
         }
 
+        public override bool Interactable
+        {
+            get { return _health < _maxHealth; }
+        }
+
         /// <summary>
         /// Initializes the object.
         /// </summary>

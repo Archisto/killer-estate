@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mouseClickRange: 1
+  _interactable: 1
   _room1: {fileID: 0}
   _room2: {fileID: 0}
   _unlockCost: 100

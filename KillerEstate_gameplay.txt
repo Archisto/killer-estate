@@ -7,6 +7,7 @@
   - Hardware Bases
   - Vital Bases
   - Hardware Blueprints?
+  - Stone people, "Geombies"
 - Each room has one Vital Base in its center
 - Only a weapon can be in a Vital Base
 - By clicking on an empty Hardware Base, the player can place any Hardware there from a list
@@ -26,3 +27,8 @@
 - Scrolling the middle mouse wheel changes the Secondary action (Knife, Time Bomb, Revolver, Remove Hardware, ...)
 - Critical hits?
 - The player earns points by killing zombies and boarding up windows
+
+- The player controls Andre Mavrow, a lone soldier whose battalion has been wiped out by living stone people.
+- The mission is to survive the onslaught and find a cure for people who have been turned to stone.
+- Not only are fellow soldiers now statues, but also Andre's close friends who were attacked by the stone people.
+- One of the friends is visibly pregnant, which makes the situation that much more dreadful.

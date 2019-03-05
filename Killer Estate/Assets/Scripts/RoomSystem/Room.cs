@@ -22,10 +22,24 @@ namespace KillerEstate
 
         private CameraController _camera;
         private HardwareManager _hwManager;
+        private bool _open;
 
         public HardwareBase VitalHardwareBase { get; private set; }
 
         public bool StartingRoom { get { return _startingRoom; } }
+
+        public bool Open
+        {
+            get
+            {
+                return _open;
+            }
+            set
+            {
+                _open = value;
+                GameManager.Instance.OpenRoom(this, value);
+            }
+        }
 
         /// <summary>
         /// Initializes the object.
@@ -39,6 +53,7 @@ namespace KillerEstate
 
             if (StartingRoom)
             {
+                Open = true;
                 Enter();
                 VitalHardwareBase.SetHardware(_hwManager.GetRandomHardware(true));
                 VitalHardwareBase.InitVitalWeaponInfo();

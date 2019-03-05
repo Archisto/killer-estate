@@ -54,3 +54,15 @@ Stats
 - Sisu:		waves survived
 - Palo:		rooms opened
 - Huoli:	Vital Weapons protected (rooms entered while the VW is under attack without leaving and letting it get destroyed)
+
+Enemies
+- Crust:	normal
+- Headstone:	extra defence in the back
+- Summit:	extra damage to Windows
+- Motherlode:	extra score, surrounded by other enemies
+- Hardcore:	extra health
+
+Levels
+- Hideout:	a hastily built house in a jungle; one room has life-size statues of three people
+- Vertigo:	a winding path on a misty mountain; there are signs of an ancient civilization
+- Furnace:	a volcanic cave with a river of lava

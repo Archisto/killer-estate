@@ -6,6 +6,8 @@ namespace KillerEstate
 {
     public class MouseController : MonoBehaviour
     {
+        public float mouseWorldY = 1f;
+
         // Testing
         [SerializeField]
         private GameObject _testObj;
@@ -44,6 +46,23 @@ namespace KillerEstate
         }
 
         private void UpdatePosition()
+        {
+            Vector3 position = Input.mousePosition;
+            position.z = 1f;
+            position = Camera.main.ScreenToWorldPoint(position);
+            Vector3 camPos = Camera.main.transform.position;
+            Vector3 dir = (position - camPos).normalized;
+            Position = camPos + dir *
+                ((camPos.y - mouseWorldY) / (-1f * dir.y));
+        }
+
+        //private void UpdateMouseAreaPosition()
+        //{
+        //    Position = _area.GetMousePositionInArea(Input.mousePosition);
+        //    //Debug.Log("Mouse pos: " + Position);
+        //}
+
+        private void UpdatePositionV1()
         {
             Vector3 position = Input.mousePosition;
             position.z = 10f + 0.01f * position.y;

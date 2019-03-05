@@ -13,8 +13,11 @@ namespace KillerEstate
 
         protected MouseController _mouse;
         protected Room _room;
+        protected Vector3 _clickAreaCenter;
 
         public Room Room { get { return _room; } }
+
+        public virtual bool Interactable { get { return false; } }
 
         /// <summary>
         /// Initializes the object.
@@ -22,6 +25,8 @@ namespace KillerEstate
         protected virtual void Start()
         {
             _mouse = GameManager.Instance.Mouse;
+            _clickAreaCenter = transform.position;
+            _clickAreaCenter.y = _mouse.mouseWorldY;
         }
 
         public virtual void SetRoom(Room room)
@@ -69,13 +74,19 @@ namespace KillerEstate
 
         protected bool WithinClickRange(Vector3 position)
         {
-            return (Vector3.Distance(position, transform.position) <= _mouseClickRange);
+            return (Vector3.Distance(position, _clickAreaCenter)
+                    <= _mouseClickRange);
         }
 
         protected abstract void OnClick();
 
         protected virtual void OnDrawGizmos()
         {
+            if (Interactable && Application.isPlaying)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(_clickAreaCenter, _mouseClickRange);
+            }
         }
     }
 }

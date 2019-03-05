@@ -6,15 +6,17 @@ namespace KillerEstate
 {
     public class EnemySpawner : MonoBehaviour
     {
+        public bool active;
+
         public int maxConcurrentEnemies;
         public float spawnInterval;
-        public GameObject spawnPointParent;
         public Vector3 spawnAreaLowerLeftCorner;
         public Vector3 spawnAreaUpperRightCorner;
-        public TargetDummy enemyPrefab;
+        public Enemy enemyPrefab;
 
-        private Pool<TargetDummy> _enemyPool;
-        private List<Transform> _spawnPoints;
+        private EnemySpawnPoint[] _spawnPoints;
+        private List<List<EnemySpawnPoint>> _validRoomSpawnPoints;
+        private Pool<Enemy> _enemyPool;
         private Timer spawnTimer;
 
         /// <summary>
@@ -22,24 +24,20 @@ namespace KillerEstate
         /// </summary>
         private void Start()
         {
-            _enemyPool = new Pool<TargetDummy>(maxConcurrentEnemies, false, enemyPrefab);
-            InitSpawnPoints();
+            _spawnPoints = FindObjectsOfType<EnemySpawnPoint>();
+            _validRoomSpawnPoints = new List<List<EnemySpawnPoint>>();
+            _enemyPool = new Pool<Enemy>(maxConcurrentEnemies, false, enemyPrefab);
             spawnTimer = new Timer(spawnInterval, true);
             spawnTimer.Activate();
-        }
 
-        private void InitSpawnPoints()
-        {
-            _spawnPoints = new List<Transform>();
-            Transform[] transforms = spawnPointParent.GetComponentsInChildren<Transform>();
-
-            // Gets rid of the parent's transform
-            foreach (Transform t in transforms)
+            if (_spawnPoints.Length == 0)
             {
-                if (t != spawnPointParent.transform)
-                {
-                    _spawnPoints.Add(t);
-                }
+                Debug.LogError(Utils.GetObjectMissingString("EnemySpawnPoint"));
+            }
+            else
+            {
+                AddRoomValidSpawnPoints(GameManager.Instance.CurrentRoom);
+                GameManager.Instance.RoomOpened += AddRoomValidSpawnPoints;
             }
         }
 
@@ -48,20 +46,37 @@ namespace KillerEstate
         /// </summary>
         private void Update()
         {
-            if (spawnTimer.Check())
+            if (active && spawnTimer.Check())
             {
                 SpawnEnemy();
                 spawnTimer.Activate();
             }
         }
 
+        private void AddRoomValidSpawnPoints(Room room)
+        {
+            List<EnemySpawnPoint> roomSpawnPoints = new List<EnemySpawnPoint>();
+            foreach (EnemySpawnPoint spawn in _spawnPoints)
+            {
+                if (spawn.Room == room)
+                {
+                    roomSpawnPoints.Add(spawn);
+                }
+            }
+            _validRoomSpawnPoints.Add(roomSpawnPoints);
+            Debug.Log("Enemy spawnpoints added: " + roomSpawnPoints.Count);
+        }
+
         private void SpawnEnemy()
         {
-            TargetDummy enemy = _enemyPool.GetPooledObject();
+            Enemy enemy = _enemyPool.GetPooledObject();
             if (enemy != null)
             {
-                enemy.transform.position = GetRandomSpawnPoint();
-                enemy.InitVelocity();
+                EnemySpawnPoint spawn = GetRandomSpawnPoint();
+                if (spawn != null)
+                {
+                    spawn.SpawnEnemy(enemy);
+                }
             }
         }
 
@@ -73,16 +88,25 @@ namespace KillerEstate
             return position;
         }
 
-        private Vector3 GetRandomSpawnPoint()
+        private EnemySpawnPoint GetRandomSpawnPoint()
         {
-            int randomIndex = Random.Range(0, _spawnPoints.Count);
-            return _spawnPoints[randomIndex].position;
+            if (_validRoomSpawnPoints.Count > 0)
+            {
+                int roomIndex = Random.Range(0, _validRoomSpawnPoints.Count);
+                int spawnIndex = Random.Range(0, _validRoomSpawnPoints[roomIndex].Count);
+                //Debug.Log("Spawn room: " + roomIndex + "; Spawn point: " + spawnIndex);
+                return _validRoomSpawnPoints[roomIndex][spawnIndex];
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.gray;
-            Utils.DrawBoxGizmo(spawnAreaLowerLeftCorner, spawnAreaUpperRightCorner);
-        }
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.gray;
+        //    Utils.DrawBoxGizmo(spawnAreaLowerLeftCorner, spawnAreaUpperRightCorner);
+        //}
     }
 }

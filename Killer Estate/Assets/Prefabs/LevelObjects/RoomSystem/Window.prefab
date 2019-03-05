@@ -46,8 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d29dfb45ebb4b4b813d4c7748b14e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mouseClickRange: 1
+  _interactable: 1
   _nearestHardware: {fileID: 0}
   _maxHealth: 5
+  _repairRate: 1
 --- !u!33 &5363324524966299202
 MeshFilter:
   m_ObjectHideFlags: 0

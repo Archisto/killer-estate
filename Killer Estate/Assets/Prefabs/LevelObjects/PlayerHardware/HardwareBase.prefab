@@ -46,9 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4b9ab2e2e18154c80488fa1d4647fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _clickAreaCenter: {fileID: 0}
+  _mouseClickRange: 1
+  _interactable: 1
   _vital: 0
   _hardwarePosition: {x: 0, y: 0.15, z: 0}
-  _mouseClickRange: 1
 --- !u!33 &2758342946141231995
 MeshFilter:
   m_ObjectHideFlags: 0

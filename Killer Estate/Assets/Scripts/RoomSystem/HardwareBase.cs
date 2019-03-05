@@ -30,6 +30,8 @@ namespace KillerEstate
             get { return transform.position + _hardwarePosition; }
         }
 
+        public override bool Interactable { get { return Hardware == null; } }
+
         /// <summary>
         /// Initializes the object.
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -446,12 +447,6 @@ namespace KillerEstate
             UI.EndGame(win);
         }
 
-        private void StartBattle()
-        {
-            WaveStatus = WaveState.Active;
-            MusicPlayer.Instance.Play(1, true);
-        }
-
         public AudioSource EndWave()
         {
             if (WaveStatus == WaveState.Lost)
@@ -474,14 +469,24 @@ namespace KillerEstate
         public void WinWave()
         {
             Debug.Log("Wave " + _waveNum + " survived");
+            ChangeScore(100);
             NextWave();
         }
 
         public void NextWave()
         {
             _waveNum++;
-            ChangeScore(100);
             Debug.Log("Now starting wave " + _waveNum);
+        }
+
+        public event Action<Room> RoomOpened;
+
+        public void OpenRoom(Room room, bool open)
+        {
+            if (open)
+            {
+                RoomOpened?.Invoke(room);
+            }
         }
 
         /// <summary>
@@ -619,6 +624,7 @@ namespace KillerEstate
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             L10n.LanguageLoaded -= OnLanguageLoaded;
+            RoomOpened = null;
         }
     }
 }
